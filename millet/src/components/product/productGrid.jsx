@@ -1,4 +1,4 @@
-import ProductCard from './ProductCard';
+import ProductCard from './productCard';
 import { SkeletonCard } from '../ui/Loader';
 
 export default function productGrid({ products, loading, onOpen }) {
