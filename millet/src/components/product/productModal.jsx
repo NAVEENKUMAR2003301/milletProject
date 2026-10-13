@@ -4,7 +4,7 @@ import { useCart } from '../../contexts/CartContext';
 import { useSound } from '../../hooks/useSound';
 import { formatPrice } from '../../utils/format';
 
-export default function ProductModal({ product, onClose }) {
+export default function productModal({ product, onClose }) {
   const { lang, t } = useLang();
   const { addItem } = useCart();
   const { play } = useSound();

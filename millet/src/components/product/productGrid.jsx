@@ -1,7 +1,7 @@
 import ProductCard from './ProductCard';
 import { SkeletonCard } from '../ui/Loader';
 
-export default function ProductGrid({ products, loading, onOpen }) {
+export default function productGrid({ products, loading, onOpen }) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
