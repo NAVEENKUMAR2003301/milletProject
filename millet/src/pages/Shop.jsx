@@ -3,8 +3,8 @@ import { useLang } from '../contexts/LanguageContext';
 import { useProducts } from '../contexts/ProductContext';
 import SearchBar from '../components/product/SearchBar';
 import CategoryFilter from '../components/product/CategoryFilter';
-import ProductGrid from '../components/product/ProductGrid';
-import ProductModal from '../components/product/ProductModal';
+import ProductGrid from '../components/product/productGrid';
+import ProductModal from '../components/product/productModal';
 import TopReviews from '../components/feedback/TopReviews';
 import EmptyState from '../components/ui/EmptyState';
 

@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { useLang } from '../contexts/LanguageContext';
 import { useProducts } from '../contexts/ProductContext';
 import { useSound } from '../hooks/useSound';
-import ProductGrid from '../components/product/ProductGrid';
-import ProductModal from '../components/product/ProductModal';
+import ProductGrid from '../components/product/productGrid';
+import ProductModal from '../components/product/productModal';
 import EmptyState from '../components/ui/EmptyState';
 import { SHOP } from '../config/shop';
 
