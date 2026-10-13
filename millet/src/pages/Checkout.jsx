@@ -31,7 +31,6 @@ export default function Checkout() {
   const [toast, setToast] = useState(null);
   const [magic, setMagic] = useState({ open: false, whatsappUrl: '', blocked: false });
 
-  // Block direct access when cart is empty
   useEffect(() => {
     if (items.length === 0 && !submitting && !magic.open) {
       navigate('/shop', { replace: true });
@@ -85,13 +84,11 @@ export default function Checkout() {
       const billText = buildBillText(order);
       const whatsappUrl = buildWhatsAppLink(billText);
 
-      // Open WhatsApp IMMEDIATELY (inside user gesture)
       let win = null;
       try {
         win = window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
       } catch {}
 
-      // Show magic popup
       setMagic({ open: true, whatsappUrl, blocked: !win });
       setSubmitting(false);
     } catch (err) {
@@ -115,17 +112,17 @@ export default function Checkout() {
   );
 
   return (
-    <main className="px-4 max-w-6xl mx-auto pt-6 animate-fade-in">
-      <div className="mb-6">
-        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-ink">
+    <main className="px-3 sm:px-4 max-w-6xl mx-auto pt-4 sm:pt-6 pb-24 md:pb-6 animate-fade-in">
+      <div className="mb-5 sm:mb-6">
+        <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-ink">
           {t('checkoutTitle')}
         </h1>
-        <p className="text-sm text-ink/50 mt-1">
+        <p className="text-xs sm:text-sm text-ink/50 mt-1">
           {items.length} {t('itemsCount')} · {t('total')}: ₹{total || 0}
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-5 gap-5">
+      <div className="grid lg:grid-cols-5 gap-4 sm:gap-5">
         <div className="lg:col-span-3">
           <CheckoutForm value={customer} onChange={setCustomer} errors={errors} />
 

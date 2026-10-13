@@ -3,8 +3,8 @@ import { useLang } from '../contexts/LanguageContext';
 import { useProducts } from '../contexts/ProductContext';
 import SearchBar from '../components/product/SearchBar';
 import CategoryFilter from '../components/product/CategoryFilter';
-import ProductGrid from '../components/product/productGrid';
-import ProductModal from '../components/product/productModal';
+import ProductGrid from '../components/product/ProductGrid';
+import ProductModal from '../components/product/ProductModal';
 import TopReviews from '../components/feedback/TopReviews';
 import EmptyState from '../components/ui/EmptyState';
 
@@ -34,20 +34,20 @@ export default function Shop() {
   }, [products, category, search, sort]);
 
   return (
-    <main className="px-4 max-w-6xl mx-auto pt-6 animate-fade-in">
+    <main className="px-3 sm:px-4 max-w-6xl mx-auto pt-4 sm:pt-6 pb-24 md:pb-6 animate-fade-in">
       {/* Top reviews (social proof) */}
       <TopReviews />
 
-      <div className="mb-6 mt-10">
-        <h1 className="font-display text-3xl md:text-4xl font-extrabold text-ink">
+      <div className="mb-6 mt-8 sm:mt-10">
+        <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold text-ink">
           {t('allProducts')}
         </h1>
-        <p className="text-sm text-ink/50 mt-1">
+        <p className="text-xs sm:text-sm text-ink/50 mt-1">
           {loading ? t('loading') : `${filtered.length} ${t('itemsCount')}`}
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="flex flex-col gap-3 sm:gap-4 mb-5 sm:mb-6">
         <SearchBar value={search} onChange={setSearch} />
 
         <div className="flex flex-col md:flex-row md:items-center gap-3">
