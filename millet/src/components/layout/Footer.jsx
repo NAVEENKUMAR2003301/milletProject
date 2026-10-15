@@ -12,7 +12,11 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-3xl">🌾</span>
+              <span className="text-3xl"><img
+            src="/logo.jpeg"
+            alt={SHOP.brand}
+            className="w-8 h-8 md:w-9 md:h-9 rounded-full object-cover border-2 border-white shadow-sm group-hover:scale-110 transition-transform flex-shrink-0"
+          /></span>
               <div>
                 <p className="font-extrabold text-trust-700 text-lg">{SHOP.brand}</p>
                 <p className="text-xs text-ink/50">{SHOP.name}</p>
