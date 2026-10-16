@@ -3,20 +3,28 @@ import { useLang } from '../../contexts/LanguageContext';
 import { useCart } from '../../contexts/CartContext';
 import { useSound } from '../../hooks/useSound';
 import { formatPrice } from '../../utils/format';
+import {
+  getVariants,
+  getLowestPrice,
+  hasMultipleVariants,
+} from '../../utils/variants';
 
-export default function productCard({ product, onOpen }) {
+export default function ProductCard({ product, onOpen }) {
   const { lang, t } = useLang();
   const { addItem } = useCart();
   const { play } = useSound();
   const [added, setAdded] = useState(false);
 
   const title = lang === 'ta' && product.titleTa ? product.titleTa : product.title;
-  const price = product.price || 0;
-  const mrp = product.mrp || price;
+  const variants = getVariants(product);
+  const multi = hasMultipleVariants(product);
+  const lowestPrice = getLowestPrice(product);
+  const firstVariant = variants[0] || {};
+  const mrp = firstVariant.mrp || lowestPrice;
   const discount =
-    product.discount || (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
+    firstVariant.discount ||
+    (mrp > lowestPrice ? Math.round(((mrp - lowestPrice) / mrp) * 100) : 0);
 
-  // Main image — supports both new `images[]` and legacy `imageUrl`
   const mainImage =
     (Array.isArray(product.images) && product.images[0]) ||
     product.imageUrl ||
@@ -29,7 +37,13 @@ export default function productCard({ product, onOpen }) {
       play('buzz');
       return;
     }
-    addItem(product, 1);
+    if (multi) {
+      onOpen?.(product);
+      return;
+    }
+    const v = variants[0];
+    if (!v) return;
+    addItem(product, v, 1);
     play('pop');
     setAdded(true);
     setTimeout(() => setAdded(false), 1200);
@@ -42,7 +56,6 @@ export default function productCard({ product, onOpen }) {
                  hover:-translate-y-1 hover:shadow-glass-lg transition-all duration-300
                  p-3 sm:p-4"
     >
-      {/* Image */}
       <div className="relative aspect-square rounded-2xl overflow-hidden bg-trust-50 mb-2.5 sm:mb-3">
         {mainImage ? (
           <img
@@ -84,30 +97,28 @@ export default function productCard({ product, onOpen }) {
         )}
       </div>
 
-      {/* Info — flex-col with mt-auto pushes button to bottom */}
       <div className="flex flex-col flex-1">
         <h3 className="font-bold text-ink text-xs sm:text-sm leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[2.5rem]">
           {title}
         </h3>
 
-        {product.weight && (
-          <p className="text-[10px] sm:text-[11px] text-ink/50 mt-0.5">
-            {product.weight}
-          </p>
-        )}
+        <p className="text-[10px] sm:text-[11px] text-ink/50 mt-0.5">
+          {multi
+            ? `${variants.length} ${t('variants')}`
+            : variants[0]?.weight || ''}
+        </p>
 
         <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
-          <span className="text-base sm:text-lg font-extrabold text-trust-700">
-            {formatPrice(price)}
-          </span>
-          {discount > 0 && (
-            <span className="text-[10px] sm:text-xs text-ink/40 line-through">
-              {formatPrice(mrp)}
+          {multi && (
+            <span className="text-[10px] sm:text-xs text-ink/50 font-semibold">
+              {t('from')}
             </span>
           )}
+          <span className="text-base sm:text-lg font-extrabold text-trust-700">
+            {formatPrice(lowestPrice)}
+          </span>
         </div>
 
-        {/* Button pinned to bottom */}
         <button
           onClick={handleAdd}
           disabled={!product.available}
@@ -117,7 +128,11 @@ export default function productCard({ product, onOpen }) {
               : 'bg-gradient-to-br from-trust-500 to-fresh-500 text-white hover:shadow-lg active:scale-95'
           } ${!product.available ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          {added ? `✓ ${t('addedToCart')}` : t('addToCart')}
+          {added
+            ? `✓ ${t('addedToCart')}`
+            : multi
+            ? `🛒 ${t('selectVariant')}`
+            : t('addToCart')}
         </button>
       </div>
     </div>

@@ -26,7 +26,6 @@ export default function CartItem({ item }) {
 
   return (
     <div className="flex gap-3 py-3 border-b border-trust-100/60 last:border-0 animate-fade-in">
-      {/* Image */}
       <div className="w-16 h-16 rounded-xl overflow-hidden bg-trust-50 flex-shrink-0">
         {item.imageUrl ? (
           <img
@@ -41,20 +40,20 @@ export default function CartItem({ item }) {
         )}
       </div>
 
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <h4 className="font-bold text-ink text-sm line-clamp-2 leading-snug">
           {title}
         </h4>
         {item.weight && (
-          <p className="text-[10px] text-ink/50 mt-0.5">{item.weight}</p>
+          <p className="text-[10px] text-ink/60 mt-0.5 font-semibold">
+            📦 {item.weight}
+          </p>
         )}
         <p className="text-sm font-extrabold text-trust-700 mt-1">
           {formatPrice(item.price)}
         </p>
       </div>
 
-      {/* Qty + remove */}
       <div className="flex flex-col items-end justify-between">
         <button
           onClick={remove}

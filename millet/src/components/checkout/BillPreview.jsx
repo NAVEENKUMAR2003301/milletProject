@@ -2,7 +2,14 @@ import { useLang } from '../../contexts/LanguageContext';
 import { SHOP } from '../../config/shop';
 import { formatPrice, formatDateTime } from '../../utils/format';
 
-export default function BillPreview({ orderId, customer, items, subtotal, savings, total }) {
+export default function BillPreview({
+  orderId,
+  customer,
+  items,
+  subtotal,
+  savings,
+  total,
+}) {
   const { lang, t } = useLang();
 
   return (
@@ -46,9 +53,7 @@ export default function BillPreview({ orderId, customer, items, subtotal, saving
           {customer.address && (
             <div className="mt-1">
               <span className="text-ink/50">{t('address')}:</span>
-              <p className="font-medium text-ink/70 mt-0.5">
-                {customer.address}
-              </p>
+              <p className="font-medium text-ink/70 mt-0.5">{customer.address}</p>
             </div>
           )}
         </div>
@@ -59,9 +64,7 @@ export default function BillPreview({ orderId, customer, items, subtotal, saving
           {t('billPreview')}
         </p>
         {items.length === 0 ? (
-          <p className="text-xs text-ink/40 text-center py-4">
-            {t('emptyCart')}
-          </p>
+          <p className="text-xs text-ink/40 text-center py-4">{t('emptyCart')}</p>
         ) : (
           <div className="flex flex-col gap-2">
             {items.map((i) => {
@@ -77,8 +80,12 @@ export default function BillPreview({ orderId, customer, items, subtotal, saving
                     </span>
                   </div>
                   <div className="text-ink/50 text-[10px]">
+                    {i.weight && (
+                      <span className="font-bold text-trust-600 mr-1">
+                        [{i.weight}]
+                      </span>
+                    )}
                     {i.qty} × {formatPrice(i.price)}
-                    {i.weight && ` · ${i.weight}`}
                   </div>
                 </div>
               );
@@ -100,9 +107,7 @@ export default function BillPreview({ orderId, customer, items, subtotal, saving
         )}
         <div className="flex justify-between text-lg pt-2 mt-1 border-t border-trust-100">
           <span className="font-bold">{t('total')}</span>
-          <span className="font-extrabold text-trust-700">
-            {formatPrice(total)}
-          </span>
+          <span className="font-extrabold text-trust-700">{formatPrice(total)}</span>
         </div>
       </div>
 

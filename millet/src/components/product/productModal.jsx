@@ -1,28 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLang } from '../../contexts/LanguageContext';
 import { useCart } from '../../contexts/CartContext';
 import { useSound } from '../../hooks/useSound';
 import { formatPrice } from '../../utils/format';
+import { getVariants } from '../../utils/variants';
 
-export default function productModal({ product, onClose }) {
+export default function ProductModal({ product, onClose }) {
   const { lang, t } = useLang();
   const { addItem } = useCart();
   const { play } = useSound();
   const [qty, setQty] = useState(1);
   const [imgIndex, setImgIndex] = useState(0);
+  const [variantId, setVariantId] = useState(null);
 
-  // Build image array (supports both new `images[]` and legacy `imageUrl`)
-  const images =
-    Array.isArray(product?.images) && product.images.length > 0
-      ? product.images
-      : product?.imageUrl
-      ? [product.imageUrl]
-      : [];
+  const variants = useMemo(() => getVariants(product), [product]);
+  const images = useMemo(() => {
+    if (!product) return [];
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      return product.images;
+    }
+    return product.imageUrl ? [product.imageUrl] : [];
+  }, [product]);
 
   useEffect(() => {
     if (!product) return;
     setQty(1);
     setImgIndex(0);
+    setVariantId(variants[0]?.id || null);
+
     const onKey = (e) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', onKey);
     document.body.style.overflow = 'hidden';
@@ -30,24 +35,29 @@ export default function productModal({ product, onClose }) {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
     };
-  }, [product, onClose]);
+  }, [product, onClose, variants]);
 
   if (!product) return null;
+
+  const selectedVariant =
+    variants.find((v) => v.id === variantId) || variants[0];
 
   const title = lang === 'ta' && product.titleTa ? product.titleTa : product.title;
   const description =
     lang === 'ta' && product.descriptionTa ? product.descriptionTa : product.description;
-  const price = product.price || 0;
-  const mrp = product.mrp || price;
+  const price = selectedVariant?.price || 0;
+  const mrp = selectedVariant?.mrp || price;
   const discount =
-    product.discount || (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
+    selectedVariant?.discount ||
+    (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
 
   const handleAdd = () => {
     if (!product.available) {
       play('buzz');
       return;
     }
-    addItem(product, qty);
+    if (!selectedVariant) return;
+    addItem(product, selectedVariant, qty);
     play('pop');
     onClose();
   };
@@ -88,7 +98,6 @@ export default function productModal({ product, onClose }) {
         </button>
 
         <div className="grid md:grid-cols-2 gap-5">
-          {/* Gallery */}
           <div>
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-trust-50">
               {currentImg ? (
@@ -107,7 +116,6 @@ export default function productModal({ product, onClose }) {
                 <>
                   <button
                     onClick={prevImg}
-                    aria-label="Previous image"
                     className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full
                                bg-white/90 backdrop-blur-sm text-trust-700 font-bold
                                hover:bg-white shadow-md transition active:scale-95"
@@ -116,14 +124,12 @@ export default function productModal({ product, onClose }) {
                   </button>
                   <button
                     onClick={nextImg}
-                    aria-label="Next image"
                     className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full
                                bg-white/90 backdrop-blur-sm text-trust-700 font-bold
                                hover:bg-white shadow-md transition active:scale-95"
                   >
                     ›
                   </button>
-
                   <div className="absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-ink/70 backdrop-blur-sm text-white text-[10px] font-bold">
                     {imgIndex + 1} / {images.length}
                   </div>
@@ -131,7 +137,6 @@ export default function productModal({ product, onClose }) {
               )}
             </div>
 
-            {/* Thumbnails */}
             {images.length > 1 && (
               <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar pb-1">
                 {images.map((url, i) => (
@@ -158,15 +163,10 @@ export default function productModal({ product, onClose }) {
             )}
           </div>
 
-          {/* Details */}
           <div className="flex flex-col">
             <h2 className="text-2xl font-display font-extrabold text-ink leading-tight">
               {title}
             </h2>
-
-            {product.weight && (
-              <p className="text-xs text-ink/50 mt-1">{product.weight}</p>
-            )}
 
             <div className="mt-3 flex items-baseline gap-3">
               <span className="text-3xl font-extrabold text-trust-700">
@@ -183,6 +183,41 @@ export default function productModal({ product, onClose }) {
                 </>
               )}
             </div>
+
+            {variants.length > 0 && (
+              <div className="mt-4">
+                <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2">
+                  {t('selectVariant')}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {variants.map((v) => (
+                    <button
+                      key={v.id}
+                      onClick={() => {
+                        play('tick');
+                        setVariantId(v.id);
+                      }}
+                      className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border-2 flex flex-col items-center gap-0.5 min-w-[80px] ${
+                        v.id === selectedVariant?.id
+                          ? 'bg-gradient-to-br from-trust-500 to-fresh-500 text-white border-transparent shadow-md'
+                          : 'bg-white text-trust-700 border-trust-100 hover:border-trust-300'
+                      }`}
+                    >
+                      <span>{v.weight || '—'}</span>
+                      <span
+                        className={`text-[10px] font-extrabold ${
+                          v.id === selectedVariant?.id
+                            ? 'text-white/90'
+                            : 'text-trust-700'
+                        }`}
+                      >
+                        ₹{v.price}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {description && (
               <p className="text-sm text-ink/70 mt-4 leading-relaxed">{description}</p>
@@ -217,7 +252,6 @@ export default function productModal({ product, onClose }) {
               </div>
             )}
 
-            {/* Qty + Add */}
             <div className="mt-5 pt-4 border-t border-trust-100/60 flex items-center gap-3 mt-auto">
               <div className="flex items-center rounded-xl bg-white border-2 border-trust-100">
                 <button

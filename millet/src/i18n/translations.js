@@ -154,6 +154,17 @@ export const translations = {
     close: 'Close',
     yes: 'Yes',
     no: 'No',
+
+        variants: 'Weights & Prices',
+    addVariant: 'Add Weight',
+    removeVariant: 'Remove',
+    variantWeight: 'Weight',
+    variantRequired: 'At least one weight/price is required',
+    selectVariant: 'Select Weight',
+    from: 'From',
+    inStock: 'In Stock',
+    outOfStockVariant: 'Out of Stock',
+    priceRange: 'Price Range',
   },
 
   ta: {
@@ -311,6 +322,17 @@ export const translations = {
     close: 'மூடு',
     yes: 'ஆம்',
     no: 'இல்லை',
+
+        variants: 'எடை மற்றும் விலை',
+    addVariant: 'எடை சேர்',
+    removeVariant: 'நீக்கு',
+    variantWeight: 'எடை',
+    variantRequired: 'குறைந்தது ஒரு எடை/விலை தேவை',
+    selectVariant: 'எடையை தேர்ந்தெடு',
+    from: 'முதல்',
+    inStock: 'கையிருப்பில் உள்ளது',
+    outOfStockVariant: 'கையிருப்பில் இல்லை',
+    priceRange: 'விலை வரம்பு',
   },
 };
 

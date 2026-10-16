@@ -29,7 +29,11 @@ export default function Checkout() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
-  const [magic, setMagic] = useState({ open: false, whatsappUrl: '', blocked: false });
+  const [magic, setMagic] = useState({
+    open: false,
+    whatsappUrl: '',
+    blocked: false,
+  });
 
   useEffect(() => {
     if (items.length === 0 && !submitting && !magic.open) {
@@ -63,7 +67,8 @@ export default function Checkout() {
           notes: customer.notes?.trim() || '',
         },
         items: items.map((i) => ({
-          productId: i.id || '',
+          productId: i.productId || '',
+          variantId: i.variantId || '',
           title: i.title || '',
           titleTa: i.titleTa || '',
           weight: i.weight || '',

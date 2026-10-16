@@ -3,6 +3,14 @@ import { useLang } from '../../contexts/LanguageContext';
 import { useSound } from '../../hooks/useSound';
 import { SHOP } from '../../config/shop';
 import { uploadImage } from '../../utils/cloudinary';
+import { makeVariantId, computeVariantPrice } from '../../utils/variants';
+
+const emptyVariant = () => ({
+  id: makeVariantId(),
+  weight: '',
+  mrp: '',
+  discount: 0,
+});
 
 const EMPTY = {
   title: '',
@@ -11,22 +19,12 @@ const EMPTY = {
   descriptionTa: '',
   ingredients: '',
   preparation: '',
-  weight: '',
   category: 'dosa-mix',
-  mrp: '',
-  discount: 0,
-  images: [],        // ← array of URLs
+  variants: [emptyVariant()],
+  images: [],
   available: true,
   featured: false,
 };
-
-function computeFinalPrice(mrp, discount) {
-  const m = Number(mrp) || 0;
-  const d = Number(discount) || 0;
-  if (m <= 0) return 0;
-  if (d <= 0) return m;
-  return Math.round(m * (1 - d / 100));
-}
 
 export default function ProductForm({ editing, onSave, onCancel }) {
   const { t } = useLang();
@@ -40,7 +38,25 @@ export default function ProductForm({ editing, onSave, onCancel }) {
 
   useEffect(() => {
     if (editing) {
-      // Support legacy single-image products
+      let variants;
+      if (Array.isArray(editing.variants) && editing.variants.length > 0) {
+        variants = editing.variants.map((v) => ({
+          id: v.id || makeVariantId(),
+          weight: v.weight || '',
+          mrp: v.mrp || v.price || '',
+          discount: v.discount || 0,
+        }));
+      } else {
+        variants = [
+          {
+            id: makeVariantId(),
+            weight: editing.weight || '',
+            mrp: editing.mrp || editing.price || '',
+            discount: editing.discount || 0,
+          },
+        ];
+      }
+
       const legacyImages = [];
       if (Array.isArray(editing.images) && editing.images.length) {
         legacyImages.push(...editing.images);
@@ -51,8 +67,7 @@ export default function ProductForm({ editing, onSave, onCancel }) {
       setForm({
         ...EMPTY,
         ...editing,
-        mrp: editing.mrp || editing.price || '',
-        discount: editing.discount || 0,
+        variants,
         images: legacyImages,
         ingredients: Array.isArray(editing.ingredients)
           ? editing.ingredients.join(', ')
@@ -65,13 +80,26 @@ export default function ProductForm({ editing, onSave, onCancel }) {
 
   const update = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
-  const finalPrice = computeFinalPrice(form.mrp, form.discount);
-  const savings =
-    Number(form.mrp) > 0 && finalPrice > 0
-      ? Number(form.mrp) - finalPrice
-      : 0;
+  const addVariant = () => {
+    play('click');
+    setForm((f) => ({ ...f, variants: [...f.variants, emptyVariant()] }));
+  };
 
-  // ── Multi-image upload ────────────────────────────────────
+  const removeVariant = (id) => {
+    play('whoosh');
+    setForm((f) => ({
+      ...f,
+      variants: f.variants.filter((v) => v.id !== id),
+    }));
+  };
+
+  const updateVariant = (id, key, val) => {
+    setForm((f) => ({
+      ...f,
+      variants: f.variants.map((v) => (v.id === id ? { ...v, [key]: val } : v)),
+    }));
+  };
+
   const handleFiles = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
@@ -95,7 +123,6 @@ export default function ProductForm({ editing, onSave, onCancel }) {
     } finally {
       setUploading(false);
       setProgress(0);
-      // Reset file input so same file can be re-selected
       e.target.value = '';
     }
   };
@@ -113,7 +140,6 @@ export default function ProductForm({ editing, onSave, onCancel }) {
     });
   };
 
-  // ── Save ──────────────────────────────────────────────────
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -123,20 +149,23 @@ export default function ProductForm({ editing, onSave, onCancel }) {
       play('buzz');
       return;
     }
-    if (!form.mrp || Number(form.mrp) <= 0) {
-      setError(t('mrp') + ' required');
+
+    const validVariants = form.variants.filter((v) => Number(v.mrp) > 0);
+    if (validVariants.length === 0) {
+      setError(t('variantRequired'));
       play('buzz');
       return;
     }
 
-    const mrpNum = Number(form.mrp);
-    const discNum = Number(form.discount) || 0;
+    const cleanedVariants = validVariants.map((v) => ({
+      id: v.id,
+      weight: String(v.weight || '').trim(),
+      mrp: Number(v.mrp) || 0,
+      discount: Number(v.discount) || 0,
+      price: computeVariantPrice(v.mrp, v.discount),
+    }));
 
-    if (discNum < 0 || discNum > 100) {
-      setError('Discount must be between 0 and 100');
-      play('buzz');
-      return;
-    }
+    const firstVariant = cleanedVariants[0];
 
     setSaving(true);
     try {
@@ -150,11 +179,12 @@ export default function ProductForm({ editing, onSave, onCancel }) {
           .map((s) => s.trim())
           .filter(Boolean),
         preparation: form.preparation.trim(),
-        weight: form.weight.trim(),
         category: form.category,
-        mrp: mrpNum,
-        discount: discNum,
-        price: computeFinalPrice(mrpNum, discNum),
+        variants: cleanedVariants,
+        weight: firstVariant.weight,
+        mrp: firstVariant.mrp,
+        price: firstVariant.price,
+        discount: firstVariant.discount,
         images: form.images,
         imageUrl: form.images[0] || '',
         available: !!form.available,
@@ -162,7 +192,7 @@ export default function ProductForm({ editing, onSave, onCancel }) {
       };
       await onSave(payload);
       play('success');
-      setForm(EMPTY);
+      setForm({ ...EMPTY, variants: [emptyVariant()] });
     } catch (err) {
       console.error(err);
       setError(err.message || 'Save failed');
@@ -185,7 +215,6 @@ export default function ProductForm({ editing, onSave, onCancel }) {
       </h2>
 
       <div className="grid md:grid-cols-2 gap-4">
-        {/* Title EN */}
         <div>
           <label className={label}>{t('productTitle')} (EN) *</label>
           <input
@@ -196,7 +225,6 @@ export default function ProductForm({ editing, onSave, onCancel }) {
           />
         </div>
 
-        {/* Title TA */}
         <div>
           <label className={label}>{t('productTitleTa')}</label>
           <input
@@ -207,8 +235,7 @@ export default function ProductForm({ editing, onSave, onCancel }) {
           />
         </div>
 
-        {/* Category */}
-        <div>
+        <div className="md:col-span-2">
           <label className={label}>{t('category')}</label>
           <select
             className="input-field"
@@ -222,86 +249,131 @@ export default function ProductForm({ editing, onSave, onCancel }) {
             ))}
           </select>
         </div>
-
-        {/* Weight */}
-        <div>
-          <label className={label}>{t('productWeight')}</label>
-          <input
-            className="input-field"
-            value={form.weight}
-            onChange={(e) => update('weight', e.target.value)}
-            placeholder="500g"
-          />
-        </div>
-
-        {/* MRP */}
-        <div>
-          <label className={label}>{t('mrp')} (₹) *</label>
-          <input
-            type="number"
-            min="0"
-            step="1"
-            className="input-field"
-            value={form.mrp}
-            onChange={(e) => update('mrp', e.target.value)}
-            placeholder="150"
-          />
-        </div>
-
-        {/* Discount % */}
-        <div>
-          <label className={label}>{t('discount')} (%)</label>
-          <input
-            type="number"
-            min="0"
-            max="100"
-            step="1"
-            className="input-field"
-            value={form.discount}
-            onChange={(e) => update('discount', e.target.value)}
-            placeholder="5"
-          />
-        </div>
-
-        {/* Auto-computed final price */}
-        <div className="md:col-span-2">
-          <label className={label}>{t('price')} — auto-calculated</label>
-          <div className="input-field bg-trust-50 border-trust-200 flex items-center justify-between">
-            <span className="font-extrabold text-trust-700 text-lg">
-              ₹{finalPrice || 0}
-            </span>
-            {savings > 0 && (
-              <span className="text-xs font-semibold text-fresh-600">
-                Customer saves ₹{savings} ({form.discount}% off)
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Toggles */}
-        <div className="md:col-span-2 flex items-center gap-6 flex-wrap">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.available}
-              onChange={(e) => update('available', e.target.checked)}
-              className="w-4 h-4 accent-trust-500"
-            />
-            <span className="text-sm font-semibold">{t('available')}</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.featured}
-              onChange={(e) => update('featured', e.target.checked)}
-              className="w-4 h-4 accent-amber-500"
-            />
-            <span className="text-sm font-semibold">⭐ {t('featured')}</span>
-          </label>
-        </div>
       </div>
 
-      {/* Descriptions */}
+      {/* VARIANTS */}
+      <div className="mt-5">
+        <div className="flex items-center justify-between mb-2">
+          <label className={label}>{t('variants')} *</label>
+          <button
+            type="button"
+            onClick={addVariant}
+            className="text-xs font-bold text-trust-700 hover:text-fresh-600 transition flex items-center gap-1"
+          >
+            ➕ {t('addVariant')}
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {form.variants.map((v) => {
+            const price = computeVariantPrice(v.mrp, v.discount);
+            return (
+              <div
+                key={v.id}
+                className="rounded-2xl border-2 border-trust-100 bg-white/60 p-3 grid grid-cols-12 gap-2 items-end"
+              >
+                <div className="col-span-12 sm:col-span-4">
+                  <label className="text-[10px] font-bold text-trust-700 uppercase tracking-wide mb-1 block">
+                    {t('variantWeight')}
+                  </label>
+                  <input
+                    className="input-field py-2 text-sm"
+                    value={v.weight}
+                    onChange={(e) =>
+                      updateVariant(v.id, 'weight', e.target.value)
+                    }
+                    placeholder="500g"
+                  />
+                </div>
+
+                <div className="col-span-6 sm:col-span-3">
+                  <label className="text-[10px] font-bold text-trust-700 uppercase tracking-wide mb-1 block">
+                    {t('mrp')} (₹)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    className="input-field py-2 text-sm"
+                    value={v.mrp}
+                    onChange={(e) => updateVariant(v.id, 'mrp', e.target.value)}
+                    placeholder="150"
+                  />
+                </div>
+
+                <div className="col-span-6 sm:col-span-2">
+                  <label className="text-[10px] font-bold text-trust-700 uppercase tracking-wide mb-1 block">
+                    %
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    step="1"
+                    className="input-field py-2 text-sm"
+                    value={v.discount}
+                    onChange={(e) =>
+                      updateVariant(v.id, 'discount', e.target.value)
+                    }
+                    placeholder="0"
+                  />
+                </div>
+
+                <div className="col-span-9 sm:col-span-2">
+                  <label className="text-[10px] font-bold text-trust-700 uppercase tracking-wide mb-1 block">
+                    {t('price')}
+                  </label>
+                  <div className="input-field py-2 text-sm bg-trust-50 font-extrabold text-trust-700 flex items-center justify-center">
+                    ₹{price}
+                  </div>
+                </div>
+
+                <div className="col-span-3 sm:col-span-1 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => removeVariant(v.id)}
+                    disabled={form.variants.length === 1}
+                    className={`p-2 rounded-lg transition ${
+                      form.variants.length === 1
+                        ? 'opacity-30 cursor-not-allowed'
+                        : 'hover:bg-red-50 text-red-500'
+                    }`}
+                    title={t('removeVariant')}
+                  >
+                    🗑️
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <p className="text-[11px] text-ink/50 mt-2">
+          Each weight can have its own MRP & discount. Price is auto-calculated.
+        </p>
+      </div>
+
+      <div className="mt-4 flex items-center gap-6 flex-wrap">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.available}
+            onChange={(e) => update('available', e.target.checked)}
+            className="w-4 h-4 accent-trust-500"
+          />
+          <span className="text-sm font-semibold">{t('available')}</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.featured}
+            onChange={(e) => update('featured', e.target.checked)}
+            className="w-4 h-4 accent-amber-500"
+          />
+          <span className="text-sm font-semibold">⭐ {t('featured')}</span>
+        </label>
+      </div>
+
       <div className="mt-4 grid md:grid-cols-2 gap-4">
         <div>
           <label className={label}>{t('productDescription')} (EN)</label>
@@ -323,7 +395,6 @@ export default function ProductForm({ editing, onSave, onCancel }) {
         </div>
       </div>
 
-      {/* Ingredients + Preparation */}
       <div className="mt-4 grid md:grid-cols-2 gap-4">
         <div>
           <label className={label}>{t('productIngredients')}</label>
@@ -345,14 +416,12 @@ export default function ProductForm({ editing, onSave, onCancel }) {
         </div>
       </div>
 
-      {/* MULTI-IMAGE UPLOAD */}
       <div className="mt-5">
         <label className={label}>
           {t('productImage')} {form.images.length > 0 && `(${form.images.length})`}
         </label>
         <p className="text-[11px] text-ink/50 mb-2">{t('imagesHint')}</p>
 
-        {/* Grid of images */}
         {form.images.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
             {form.images.map((url, idx) => (
@@ -365,15 +434,11 @@ export default function ProductForm({ editing, onSave, onCancel }) {
                   alt={`Product ${idx + 1}`}
                   className="w-full h-full object-cover"
                 />
-
-                {/* Main badge */}
                 {idx === 0 && (
                   <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-fresh-500 text-white text-[10px] font-bold shadow">
                     {t('mainImage')}
                   </span>
                 )}
-
-                {/* Hover controls */}
                 <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2">
                   {idx !== 0 && (
                     <button
@@ -397,7 +462,6 @@ export default function ProductForm({ editing, onSave, onCancel }) {
           </div>
         )}
 
-        {/* Upload button */}
         <label
           className={`block w-full px-4 py-4 rounded-2xl border-2 border-dashed cursor-pointer text-center transition-all ${
             uploading
@@ -438,7 +502,6 @@ export default function ProductForm({ editing, onSave, onCancel }) {
         </p>
       )}
 
-      {/* Actions */}
       <div className="mt-6 flex flex-col sm:flex-row gap-3">
         <button
           type="button"
