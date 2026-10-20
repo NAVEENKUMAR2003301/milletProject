@@ -13,4 +13,28 @@ export const SHOP = {
     { id: 'malt',        en: 'Malt Drinks',  ta: 'மால்ட் பானங்கள்' },
     { id: 'health-mix',  en: 'Health Mix',   ta: 'ஹெல்த் மிக்ஸ்' },
   ],
+  // 🚚 SHIPPING METHODS
+  shippingMethods: [
+    {
+      id: 'standard',
+      name: 'Standard Delivery',
+      desc: 'Delivered in 3-5 days',
+      cost: 40,
+      freeAbove: 500, // Free if cart subtotal >= 500
+    },
+    {
+      id: 'express',
+      name: 'Express Delivery',
+      desc: 'Delivered in 1-2 days',
+      cost: 100,
+      freeAbove: null,
+    },
+    {
+      id: 'pickup',
+      name: 'Store Pickup',
+      desc: 'Pick up from our Panruti store',
+      cost: 0,
+      freeAbove: null,
+    },
+  ],
 };

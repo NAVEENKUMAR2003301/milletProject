@@ -30,7 +30,8 @@ export default function ProductModal({ product, onClose }) {
 
     const onKey = (e) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', onKey);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    
     return () => {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
@@ -39,23 +40,16 @@ export default function ProductModal({ product, onClose }) {
 
   if (!product) return null;
 
-  const selectedVariant =
-    variants.find((v) => v.id === variantId) || variants[0];
-
+  const selectedVariant = variants.find((v) => v.id === variantId) || variants[0];
   const title = lang === 'ta' && product.titleTa ? product.titleTa : product.title;
-  const description =
-    lang === 'ta' && product.descriptionTa ? product.descriptionTa : product.description;
+  const description = lang === 'ta' && product.descriptionTa ? product.descriptionTa : product.description;
+  
   const price = selectedVariant?.price || 0;
   const mrp = selectedVariant?.mrp || price;
-  const discount =
-    selectedVariant?.discount ||
-    (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
+  const discount = selectedVariant?.discount || (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
 
   const handleAdd = () => {
-    if (!product.available) {
-      play('buzz');
-      return;
-    }
+    if (!product.available) { play('buzz'); return; }
     if (!selectedVariant) return;
     addItem(product, selectedVariant, qty);
     play('pop');
@@ -67,6 +61,7 @@ export default function ProductModal({ product, onClose }) {
     play('tick');
     setImgIndex((i) => (i + 1) % images.length);
   };
+  
   const prevImg = () => {
     if (images.length < 2) return;
     play('tick');
@@ -76,217 +71,202 @@ export default function ProductModal({ product, onClose }) {
   const currentImg = images[imgIndex];
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4"
-      onClick={onClose}
-    >
-      <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm animate-fade-in" />
+    <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-6" onClick={onClose}>
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-ink/50 backdrop-blur-sm animate-fade-in" />
 
+      {/* Modal Container */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto
-                   glass-dark rounded-t-3xl md:rounded-3xl p-5 md:p-7
-                   animate-slide-up shadow-glass-lg"
+        className="relative w-full max-w-4xl bg-white md:glass-dark rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh] md:max-h-[85vh] animate-slide-up overflow-hidden"
       >
+        {/* Mobile Drag Handle */}
+        <div className="md:hidden w-12 h-1.5 bg-ink/20 rounded-full mx-auto mt-3 flex-shrink-0" />
+
+        {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 rounded-xl bg-white/80 text-ink/60
-                     hover:text-ink hover:bg-white transition"
-          aria-label={t('close')}
+          className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-white/90 md:bg-white text-ink/60 hover:text-ink shadow-sm backdrop-blur-md transition active:scale-95"
+          aria-label="Close"
         >
           ✕
         </button>
 
-        <div className="grid md:grid-cols-2 gap-5">
-          <div>
-            <div className="relative aspect-square rounded-2xl overflow-hidden bg-trust-50">
-              {currentImg ? (
-                <img
-                  src={currentImg}
-                  alt={title}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-7xl opacity-60">
-                  🌾
-                </div>
-              )}
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 pb-4 md:pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+            
+            {/* Left Column: Image Gallery */}
+            <div className="flex flex-col gap-3">
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-trust-50 border border-trust-100/50 shadow-sm">
+                {currentImg ? (
+                  <img src={currentImg} alt={title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-7xl opacity-40">🌾</div>
+                )}
 
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevImg}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full
-                               bg-white/90 backdrop-blur-sm text-trust-700 font-bold
-                               hover:bg-white shadow-md transition active:scale-95"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    onClick={nextImg}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full
-                               bg-white/90 backdrop-blur-sm text-trust-700 font-bold
-                               hover:bg-white shadow-md transition active:scale-95"
-                  >
-                    ›
-                  </button>
-                  <div className="absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-ink/70 backdrop-blur-sm text-white text-[10px] font-bold">
-                    {imgIndex + 1} / {images.length}
+                {/* Navigation Arrows */}
+                {images.length > 1 && (
+                  <>
+                    <button onClick={prevImg} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/80 backdrop-blur-md text-trust-700 font-bold flex items-center justify-center shadow-md hover:bg-white transition active:scale-95">‹</button>
+                    <button onClick={nextImg} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/80 backdrop-blur-md text-trust-700 font-bold flex items-center justify-center shadow-md hover:bg-white transition active:scale-95">›</button>
+                    
+                    {/* Image Counter */}
+                    <div className="absolute bottom-3 right-3 px-2.5 py-1 rounded-lg bg-ink/60 backdrop-blur-md text-white text-[10px] font-bold">
+                      {imgIndex + 1} / {images.length}
+                    </div>
+                  </>
+                )}
+
+                {/* Discount Badge */}
+                {discount > 0 && (
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-amber-500 text-white text-xs font-extrabold shadow-md">
+                    {discount}% OFF
                   </div>
-                </>
-              )}
-            </div>
-
-            {images.length > 1 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                {images.map((url, i) => (
-                  <button
-                    key={url + i}
-                    onClick={() => {
-                      play('tick');
-                      setImgIndex(i);
-                    }}
-                    className={`w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all ${
-                      i === imgIndex
-                        ? 'border-trust-500 shadow-md scale-105'
-                        : 'border-transparent opacity-60 hover:opacity-100'
-                    }`}
-                  >
-                    <img
-                      src={url}
-                      alt={`thumb ${i + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
+                )}
               </div>
-            )}
-          </div>
 
-          <div className="flex flex-col">
-            <h2 className="text-2xl font-display font-extrabold text-ink leading-tight">
-              {title}
-            </h2>
-
-            <div className="mt-3 flex items-baseline gap-3">
-              <span className="text-3xl font-extrabold text-trust-700">
-                {formatPrice(price)}
-              </span>
-              {discount > 0 && (
-                <>
-                  <span className="text-sm text-ink/40 line-through">
-                    {formatPrice(mrp)}
-                  </span>
-                  <span className="px-2 py-0.5 rounded-lg bg-amber-100 text-amber-700 text-[11px] font-bold">
-                    {discount}% {t('discount')}
-                  </span>
-                </>
-              )}
-            </div>
-
-            {variants.length > 0 && (
-              <div className="mt-4">
-                <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2">
-                  {t('selectVariant')}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {variants.map((v) => (
+              {/* Thumbnails */}
+              {images.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto no-scrollbar py-1">
+                  {images.map((url, i) => (
                     <button
-                      key={v.id}
-                      onClick={() => {
-                        play('tick');
-                        setVariantId(v.id);
-                      }}
-                      className={`px-3 py-2 rounded-xl text-xs font-bold transition-all border-2 flex flex-col items-center gap-0.5 min-w-[80px] ${
-                        v.id === selectedVariant?.id
-                          ? 'bg-gradient-to-br from-trust-500 to-fresh-500 text-white border-transparent shadow-md'
-                          : 'bg-white text-trust-700 border-trust-100 hover:border-trust-300'
+                      key={url + i}
+                      onClick={() => { play('tick'); setImgIndex(i); }}
+                      className={`relative w-14 h-14 md:w-16 md:h-16 rounded-xl overflow-hidden flex-shrink-0 border-2 transition-all ${
+                        i === imgIndex ? 'border-trust-500 shadow-md scale-105' : 'border-transparent opacity-60 hover:opacity-100'
                       }`}
                     >
-                      <span>{v.weight || '—'}</span>
-                      <span
-                        className={`text-[10px] font-extrabold ${
-                          v.id === selectedVariant?.id
-                            ? 'text-white/90'
-                            : 'text-trust-700'
-                        }`}
-                      >
-                        ₹{v.price}
-                      </span>
+                      <img src={url} alt={`thumb ${i + 1}`} className="w-full h-full object-cover" />
                     </button>
                   ))}
                 </div>
+              )}
+            </div>
+
+            {/* Right Column: Product Info */}
+            <div className="flex flex-col">
+              {/* Badges */}
+              <div className="flex flex-wrap gap-2 mb-2">
+                <span className="px-2.5 py-1 rounded-lg bg-fresh-50 text-fresh-700 text-[10px] font-bold border border-fresh-100">
+                  🌱 100% Natural
+                </span>
+                <span className="px-2.5 py-1 rounded-lg bg-trust-50 text-trust-700 text-[10px] font-bold border border-trust-100">
+                  {t('inStock')}
+                </span>
               </div>
-            )}
 
-            {description && (
-              <p className="text-sm text-ink/70 mt-4 leading-relaxed">{description}</p>
-            )}
+              {/* Title */}
+              <h2 className="text-2xl md:text-3xl font-display font-extrabold text-ink leading-tight mb-2">
+                {title}
+              </h2>
 
-            {Array.isArray(product.ingredients) && product.ingredients.length > 0 && (
-              <div className="mt-4">
-                <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-1.5">
-                  {t('ingredients')}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {product.ingredients.map((ing, i) => (
-                    <span
-                      key={i}
-                      className="px-2.5 py-1 rounded-lg bg-trust-50 text-trust-700 text-[11px] font-medium border border-trust-100"
-                    >
-                      {ing}
-                    </span>
-                  ))}
+              {/* Price */}
+              <div className="flex items-baseline gap-2.5 mb-5">
+                <span className="text-3xl md:text-4xl font-extrabold text-trust-700">
+                  {formatPrice(price)}
+                </span>
+                {discount > 0 && (
+                  <span className="text-sm md:text-base text-ink/40 line-through font-semibold">
+                    {formatPrice(mrp)}
+                  </span>
+                )}
+              </div>
+
+              {/* Variant Picker */}
+              {variants.length > 0 && (
+                <div className="mb-6">
+                  <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2.5">
+                    Select Weight
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {variants.map((v) => (
+                      <button
+                        key={v.id}
+                        onClick={() => { play('tick'); setVariantId(v.id); }}
+                        className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all border-2 flex items-center gap-2 ${
+                          v.id === selectedVariant?.id
+                            ? 'bg-trust-500 text-white border-trust-500 shadow-md'
+                            : 'bg-white text-trust-700 border-trust-100 hover:border-trust-300'
+                        }`}
+                      >
+                        <span>{v.weight || 'Standard'}</span>
+                        <span className={`text-[11px] px-1.5 py-0.5 rounded-md ${v.id === selectedVariant?.id ? 'bg-white/20' : 'bg-trust-50 text-trust-600'}`}>
+                          ₹{v.price}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {product.preparation && (
-              <div className="mt-4">
-                <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-1">
-                  {t('preparation')}
-                </p>
-                <p className="text-xs text-ink/70 leading-relaxed whitespace-pre-line">
-                  {product.preparation}
-                </p>
-              </div>
-            )}
+              {/* Description */}
+              {description && (
+                <div className="mb-5">
+                  <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2">
+                    Description
+                  </p>
+                  <p className="text-sm text-ink/70 leading-relaxed">{description}</p>
+                </div>
+              )}
 
-            <div className="mt-5 pt-4 border-t border-trust-100/60 flex items-center gap-3 mt-auto">
-              <div className="flex items-center rounded-xl bg-white border-2 border-trust-100">
-                <button
-                  onClick={() => {
-                    play('tick');
-                    setQty((q) => Math.max(1, q - 1));
-                  }}
-                  className="w-10 h-10 text-trust-700 font-bold text-lg hover:bg-trust-50 rounded-l-xl transition"
-                >
-                  −
-                </button>
-                <span className="w-10 text-center font-bold">{qty}</span>
-                <button
-                  onClick={() => {
-                    play('tick');
-                    setQty((q) => q + 1);
-                  }}
-                  className="w-10 h-10 text-trust-700 font-bold text-lg hover:bg-trust-50 rounded-r-xl transition"
-                >
-                  +
-                </button>
-              </div>
-
-              <button
-                onClick={handleAdd}
-                disabled={!product.available}
-                className="btn-primary flex-1"
-              >
-                {product.available
-                  ? `${t('addToCart')} — ${formatPrice(price * qty)}`
-                  : t('outOfStock')}
-              </button>
+              {/* Ingredients */}
+              {Array.isArray(product.ingredients) && product.ingredients.length > 0 && (
+                <div className="mb-5">
+                  <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2">
+                    Ingredients
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {product.ingredients.map((ing, i) => (
+                      <span key={i} className="px-2.5 py-1 rounded-lg bg-trust-50 text-trust-700 text-[11px] font-medium border border-trust-100">
+                        {ing}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
+
+        {/* Sticky Action Footer */}
+        <div className="flex-shrink-0 bg-white/95 backdrop-blur-md border-t border-trust-100 p-4 md:p-6 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+          <div className="flex items-center gap-3 max-w-4xl mx-auto">
+            {/* Quantity Selector */}
+            <div className="flex items-center rounded-xl bg-white border-2 border-trust-100 h-12">
+              <button
+                onClick={() => { play('tick'); setQty((q) => Math.max(1, q - 1)); }}
+                className="w-10 h-full text-trust-700 font-bold text-xl hover:bg-trust-50 rounded-l-xl transition"
+              >
+                −
+              </button>
+              <span className="w-8 text-center font-bold text-ink">{qty}</span>
+              <button
+                onClick={() => { play('tick'); setQty((q) => q + 1); }}
+                className="w-10 h-full text-trust-700 font-bold text-xl hover:bg-trust-50 rounded-r-xl transition"
+              >
+                +
+              </button>
+            </div>
+
+            {/* Add to Cart Button */}
+            <button
+              onClick={handleAdd}
+              disabled={!product.available}
+              className="btn-primary flex-1 h-12 text-base md:text-lg font-bold shadow-lg"
+            >
+              {product.available ? (
+                <>
+                  <span className="hidden sm:inline">Add to Cart —</span>
+                  <span>{formatPrice(price * qty)}</span>
+                </>
+              ) : (
+                t('outOfStock')
+              )}
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   );

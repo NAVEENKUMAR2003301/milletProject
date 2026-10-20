@@ -1,7 +1,7 @@
-import ProductCard from './productCard';
+import ProductCard from './ProductCard';
 import { SkeletonCard } from '../ui/Loader';
 
-export default function productGrid({ products, loading, onOpen }) {
+export default function ProductGrid({ products, loading, onOpen }) {
   if (loading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -12,13 +12,15 @@ export default function productGrid({ products, loading, onOpen }) {
     );
   }
 
+  if (!products || products.length === 0) return null;
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
       {products.map((p, idx) => (
         <div
           key={p.id}
           style={{ animationDelay: `${Math.min(idx, 12) * 40}ms` }}
-          className="animate-slide-up opacity-0 h-full"
+          className="animate-slide-up"
         >
           <ProductCard product={p} onOpen={onOpen} />
         </div>

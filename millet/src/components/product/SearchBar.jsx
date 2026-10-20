@@ -17,7 +17,7 @@ export default function SearchBar({ value, onChange }) {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <span className="absolute left-4 top-1/2 -translate-y-1/2 text-trust-500">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -40,12 +40,12 @@ export default function SearchBar({ value, onChange }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={t('search')}
-        className="input-field pl-11 pr-10"
+        className="input-field pl-11 pr-10 w-full bg-white shadow-sm"
       />
       {value && (
         <button
           onClick={() => onChange('')}
-          className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-lg text-ink/40 hover:text-ink/70 hover:bg-trust-50 transition"
+          className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-ink/40 hover:text-ink/70 hover:bg-trust-50 transition"
           aria-label="Clear search"
         >
           ✕

@@ -6,76 +6,46 @@ export default function Footer() {
   const { t } = useLang();
 
   return (
-    <footer className="mt-16 pb-24 md:pb-8 px-4">
-      <div className="glass-dark rounded-3xl p-6 md:p-10 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Brand */}
+    <footer className="mt-10 pb-24 md:pb-8 px-3 sm:px-5">
+      <div className="glass-dark rounded-3xl p-6 sm:p-10 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
+          
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="text-3xl"><img
-            src="/logo.jpeg"
-            alt={SHOP.brand}
-            className="w-8 h-8 md:w-9 md:h-9 rounded-full object-cover border-2 border-white shadow-sm group-hover:scale-110 transition-transform flex-shrink-0"
-          /></span>
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
+                <img src="/logo.jpeg" alt={SHOP.brand} className="w-full h-full object-cover" />
+              </div>
               <div>
-                <p className="font-extrabold text-trust-700 text-lg">{SHOP.brand}</p>
-                <p className="text-xs text-ink/50">{SHOP.name}</p>
+                <p className="font-display font-extrabold text-trust-700 text-lg leading-none">{SHOP.brand}</p>
+                <p className="text-[10px] text-ink/50 mt-1">{SHOP.name}</p>
               </div>
             </div>
-            <p className="text-sm text-ink/60">
-              {t('heroTagline')}
-            </p>
-            <p className="text-xs text-ink/40 mt-3">
-              {t('fssaiLic')} {SHOP.fssai}
-            </p>
+            <p className="text-xs sm:text-sm text-ink/60 leading-relaxed mb-4">{t('heroTagline')}</p>
+            <p className="text-[10px] text-ink/40">FSSAI Lic: {SHOP.fssai}</p>
           </div>
 
-          {/* Quick links */}
           <div>
-            <h4 className="font-bold text-trust-700 mb-3 text-sm uppercase tracking-wide">
-              {t('quickLinks')}
-            </h4>
+            <h4 className="font-bold text-trust-700 mb-4 text-sm uppercase tracking-wide">Quick Links</h4>
             <div className="flex flex-col gap-2 text-sm">
-              <Link to="/" className="text-ink/70 hover:text-trust-700 transition">
-                {t('home')}
-              </Link>
-              <Link to="/shop" className="text-ink/70 hover:text-trust-700 transition">
-                {t('shop')}
-              </Link>
-              <Link to="/feedback" className="text-ink/70 hover:text-trust-700 transition">
-                {t('feedback')}
-              </Link>
-              <Link to="/admin" className="text-ink/70 hover:text-trust-700 transition">
-                {t('admin')}
-              </Link>
+              <Link to="/" className="text-ink/70 hover:text-trust-700 transition">Home</Link>
+              <Link to="/shop" className="text-ink/70 hover:text-trust-700 transition">Shop All</Link>
+              <Link to="/feedback" className="text-ink/70 hover:text-trust-700 transition">Feedback</Link>
+              <Link to="/admin" className="text-ink/70 hover:text-trust-700 transition">Admin Login</Link>
             </div>
           </div>
 
-          {/* Contact */}
           <div>
-            <h4 className="font-bold text-trust-700 mb-3 text-sm uppercase tracking-wide">
-              {t('contactUs')}
-            </h4>
-            <div className="flex flex-col gap-2 text-sm text-ink/70">
+            <h4 className="font-bold text-trust-700 mb-4 text-sm uppercase tracking-wide">Contact Us</h4>
+            <div className="flex flex-col gap-3 text-sm text-ink/70">
               <p>📍 {SHOP.location}</p>
-              <a
-                href={`tel:${SHOP.phone}`}
-                className="hover:text-trust-700 transition"
-              >
-                📞 +{SHOP.phone}
-              </a>
-              <a
-                href={`mailto:${SHOP.email}`}
-                className="hover:text-trust-700 transition break-all"
-              >
-                ✉️ {SHOP.email}
-              </a>
+              <a href={`tel:${SHOP.phone}`} className="hover:text-trust-700 transition">📞 +{SHOP.phone}</a>
+              <a href={`mailto:${SHOP.email}`} className="hover:text-trust-700 transition">✉️ {SHOP.email}</a>
             </div>
           </div>
         </div>
-
-        <div className="mt-8 pt-6 border-t border-trust-100/60 text-center text-xs text-ink/50">
-          © {new Date().getFullYear()} {SHOP.name}. {t('allRightsReserved')}.
+        
+        <div className="mt-8 pt-6 border-t border-trust-100 text-center text-[10px] sm:text-xs text-ink/40">
+          © {new Date().getFullYear()} {SHOP.name}. All rights reserved.
         </div>
       </div>
     </footer>

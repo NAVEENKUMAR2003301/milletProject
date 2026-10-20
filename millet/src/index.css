@@ -1,9 +1,9 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,600&family=Manrope:wght@300;400;500;600;700;800&family=Catamaran:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
 
-/* ═══════════════════════════════════════════════════════════
-   THEME TOKENS (Tailwind v4)
-   ═══════════════════════════════════════════════════════════ */
+/* =========================================
+   1. TAILWIND THEME VARIABLES (v4)
+   ========================================= */
 @theme {
   /* Colors */
   --color-trust-50:  #F0FDFA;
@@ -29,7 +29,7 @@
   --color-amber-400: #FBBF24;
   --color-amber-500: #F59E0B;
   --color-amber-600: #D97706;
-
+  
   --color-ink: #0F172A;
 
   /* Fonts */
@@ -38,33 +38,20 @@
   --font-tamil: 'Catamaran', system-ui, sans-serif;
 
   /* Shadows */
-  --shadow-glass: 0 8px 32px 0 rgba(14, 116, 144, 0.15);
-  --shadow-glass-lg: 0 12px 48px 0 rgba(14, 116, 144, 0.20);
-
-  /* Animations */
-  --animate-float-slow: float 8s ease-in-out infinite;
-  --animate-float-med:  float 6s ease-in-out infinite;
-  --animate-float-fast: float 4s ease-in-out infinite;
-  --animate-pulse-soft: pulseSoft 2s ease-in-out infinite;
-  --animate-bounce-in:  bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  --animate-slide-up:   slideUp 0.5s ease-out;
-  --animate-slide-in-right: slideInRight 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-  --animate-fade-in:    fadeIn 0.4s ease-out;
-  --animate-scale-in:   scaleIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-  --animate-shake:      shake 0.4s ease-in-out;
-  --animate-shimmer:    shimmer 2s linear infinite;
+  --shadow-glass: 0 8px 32px 0 rgba(14, 116, 144, 0.08);
+  --shadow-glass-lg: 0 12px 48px 0 rgba(14, 116, 144, 0.15);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   KEYFRAMES
-   ═══════════════════════════════════════════════════════════ */
+/* =========================================
+   2. KEYFRAMES
+   ========================================= */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50%      { transform: translateY(-20px); }
+  50%      { transform: translateY(-15px); }
 }
 @keyframes pulseSoft {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.85; transform: scale(1.03); }
+  50%      { opacity: 0.85; transform: scale(1.02); }
 }
 @keyframes bounceIn {
   0%   { transform: scale(0.3); opacity: 0; }
@@ -72,7 +59,7 @@
   100% { transform: scale(1); opacity: 1; }
 }
 @keyframes slideUp {
-  0%   { transform: translateY(24px); opacity: 0; }
+  0%   { transform: translateY(30px); opacity: 0; }
   100% { transform: translateY(0); opacity: 1; }
 }
 @keyframes slideInRight {
@@ -84,29 +71,24 @@
   100% { opacity: 1; }
 }
 @keyframes scaleIn {
-  0%   { transform: scale(0.9); opacity: 0; }
+  0%   { transform: scale(0.95); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  25%      { transform: translateX(-6px); }
-  75%      { transform: translateX(6px); }
-}
-@keyframes shimmer {
-  0%   { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
+  25%      { transform: translateX(-5px); }
+  75%      { transform: translateX(5px); }
 }
 
-/* Magic popup animations */
+/* Magic Popup Keyframes */
 @keyframes magicPop {
-  0%   { transform: scale(0.4) rotate(-8deg); opacity: 0; }
-  55%  { transform: scale(1.12) rotate(3deg); opacity: 1; }
-  75%  { transform: scale(0.96) rotate(-1deg); }
+  0%   { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  60%  { transform: scale(1.05) rotate(2deg); opacity: 1; }
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
 @keyframes ringPulse {
-  0%   { transform: scale(0.8); opacity: 0.9; }
-  100% { transform: scale(2.2); opacity: 0; }
+  0%   { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.5); opacity: 0; }
 }
 @keyframes drawCheck {
   0%   { stroke-dashoffset: 100; }
@@ -117,66 +99,69 @@
   40%  { transform: rotate(180deg) scale(1.1); opacity: 1; }
   100% { transform: rotate(360deg) scale(0.6); opacity: 0; }
 }
-@keyframes floatUp {
-  0%   { transform: translateY(20px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
-}
-@keyframes glowPulse {
-  0%, 100% { box-shadow: 0 0 40px 8px rgba(16, 185, 129, 0.35); }
-  50%      { box-shadow: 0 0 70px 20px rgba(16, 185, 129, 0.55); }
-}
 
-/* Utility animation classes */
-.animate-magic-pop    { animation: magicPop 0.65s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
-.animate-ring-pulse   { animation: ringPulse 1.4s ease-out forwards; }
-.animate-draw-check   { stroke-dasharray: 100; animation: drawCheck 0.7s 0.35s ease-out forwards; }
-.animate-sparkle      { animation: sparkleRotate 2s ease-in-out infinite; }
-.animate-float-up     { animation: floatUp 0.5s ease-out forwards; }
-.animate-glow-pulse   { animation: glowPulse 2s ease-in-out infinite; }
+/* =========================================
+   3. ANIMATION UTILITY CLASSES
+   ========================================= */
+.animate-float-slow { animation: float 8s ease-in-out infinite; }
+.animate-float-med { animation: float 6s ease-in-out infinite; }
+.animate-float-fast { animation: float 4s ease-in-out infinite; }
+.animate-pulse-soft { animation: pulseSoft 2s ease-in-out infinite; }
+.animate-bounce-in { animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+.animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-in-right { animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+.animate-scale-in { animation: scaleIn 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards; }
+.animate-shake { animation: shake 0.4s ease-in-out; }
 
-/* Ensure slide-up children start hidden until animated */
-.animate-slide-up { animation-fill-mode: forwards; }
+.animate-magic-pop { animation: magicPop 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-ring-pulse { animation: ringPulse 1.5s ease-out forwards; }
+.animate-draw-check { stroke-dasharray: 100; animation: drawCheck 0.6s 0.3s ease-out forwards; }
+.animate-sparkle { animation: sparkleRotate 2s ease-in-out infinite; }
 
-/* ═══════════════════════════════════════════════════════════
-   BASE
-   ═══════════════════════════════════════════════════════════ */
+
+/* =========================================
+   4. BASE STYLES
+   ========================================= */
 @layer base {
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
-    scrollbar-gutter: stable;
   }
 
   body {
     background-color: var(--color-trust-50);
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-feature-settings: 'ss01', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    background-image:
-      radial-gradient(circle at 20% 10%, rgba(52, 211, 153, 0.15), transparent 40%),
-      radial-gradient(circle at 80% 80%, rgba(14, 116, 144, 0.12), transparent 45%),
-      radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.06), transparent 60%);
+    /* iOS water theme background effect */
+    background-image: 
+      radial-gradient(circle at 10% 10%, rgba(52, 211, 153, 0.1), transparent 40%),
+      radial-gradient(circle at 90% 90%, rgba(14, 116, 144, 0.08), transparent 40%);
     background-attachment: fixed;
-    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden; /* Prevents accidental horizontal scrolling on mobile */
   }
 
-  /* Serif headings */
   h1, h2, h3, .font-display {
     font-family: var(--font-serif);
-    letter-spacing: -0.01em;
-    font-feature-settings: 'ss01', 'kern', 'liga';
+    letter-spacing: -0.02em;
   }
 
-  /* Tamil detection */
+  /* Apply Tamil font when language is switched */
   :lang(ta), [lang="ta"] {
     font-family: var(--font-tamil);
   }
 
-  /* Selection */
-  *::selection {
+  /* Prevents iOS auto-zoom on input focus */
+  input, textarea, select {
+    font-size: 16px; 
+  }
+
+  /* Custom selection color */
+  ::selection {
     background-color: var(--color-fresh-300);
     color: var(--color-trust-900);
   }
@@ -186,37 +171,29 @@
     outline: 2px solid var(--color-trust-500);
     outline-offset: 2px;
   }
-
-  /* Prevent iOS zoom on input focus */
-  input, textarea, select {
-    font-size: 16px;
-  }
-
-  /* Tabular numbers for prices */
-  .tabular-nums {
-    font-variant-numeric: tabular-nums;
-  }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   COMPONENTS
-   ═══════════════════════════════════════════════════════════ */
+/* =========================================
+   5. COMPONENT CLASSES
+   ========================================= */
 @layer components {
+  /* Frosted Glass effects */
   .glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
     box-shadow: var(--shadow-glass);
   }
   .glass-dark {
     background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow: var(--shadow-glass-lg);
   }
 
+  /* Primary Gradient Button */
   .btn-primary {
     display: inline-flex;
     align-items: center;
@@ -224,26 +201,29 @@
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     border-radius: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     color: white;
     background: linear-gradient(135deg, var(--color-trust-500), var(--color-fresh-500));
-    box-shadow: 0 10px 15px -3px rgba(14, 116, 144, 0.2);
-    transition: all 0.2s;
+    box-shadow: 0 8px 20px -4px rgba(14, 116, 144, 0.3);
+    transition: all 0.2s ease;
     cursor: pointer;
     border: none;
-    font-family: var(--font-sans);
   }
   .btn-primary:hover {
-    box-shadow: 0 20px 25px -5px rgba(14, 116, 144, 0.3);
     transform: translateY(-2px);
+    box-shadow: 0 12px 25px -4px rgba(14, 116, 144, 0.4);
   }
-  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:active {
+    transform: scale(0.96);
+  }
   .btn-primary:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+    box-shadow: none;
   }
 
+  /* Outline Button */
   .btn-secondary {
     display: inline-flex;
     align-items: center;
@@ -251,102 +231,71 @@
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     border-radius: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     background: white;
-    color: var(--color-trust-600);
+    color: var(--color-trust-700);
     border: 2px solid var(--color-trust-100);
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     cursor: pointer;
-    font-family: var(--font-sans);
   }
   .btn-secondary:hover {
     border-color: var(--color-trust-300);
     background: var(--color-trust-50);
   }
-  .btn-secondary:active { transform: scale(0.98); }
-  .btn-secondary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  .btn-secondary:active {
+    transform: scale(0.96);
   }
 
-  .btn-ghost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 0.75rem;
-    font-weight: 500;
-    color: var(--color-trust-700);
-    transition: all 0.2s;
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    font-family: var(--font-sans);
-  }
-  .btn-ghost:hover { background: var(--color-trust-50); }
-  .btn-ghost:active { transform: scale(0.95); }
-
+  /* Input Fields */
   .input-field {
     width: 100%;
     padding: 0.75rem 1rem;
     border-radius: 1rem;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.9);
     border: 2px solid var(--color-trust-100);
     color: var(--color-ink);
     font-size: 1rem;
-    font-family: var(--font-sans);
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     outline: none;
   }
-  .input-field::placeholder { color: rgba(15, 23, 42, 0.4); }
+  .input-field::placeholder {
+    color: rgba(15, 23, 42, 0.4);
+  }
   .input-field:focus {
     border-color: var(--color-trust-400);
     background: white;
-  }
-
-  .card {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    box-shadow: var(--shadow-glass);
-    border-radius: 1.5rem;
-    padding: 1.25rem;
-    transition: all 0.3s;
+    box-shadow: 0 0 0 4px rgba(14, 116, 144, 0.1);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SCROLLBAR
-   ═══════════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
+/* =========================================
+   6. CUSTOM SCROLLBAR & UTILITIES
+   ========================================= */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 ::-webkit-scrollbar-thumb {
-  background: rgba(14, 116, 144, 0.25);
-  border-radius: 8px;
+  background: rgba(14, 116, 144, 0.2);
+  border-radius: 10px;
 }
-::-webkit-scrollbar-thumb:hover { background: rgba(14, 116, 144, 0.45); }
-
-/* Hide scrollbar utility */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* ═══════════════════════════════════════════════════════════
-   POLISH
-   ═══════════════════════════════════════════════════════════ */
-
-/* Page fade for route transitions */
-main {
-  animation: fadeIn 0.35s ease-out;
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(14, 116, 144, 0.4);
 }
 
-/* Better tap feedback on mobile */
-button, a {
-  -webkit-tap-highlight-color: transparent;
+/* Hide scrollbar for horizontal scrolling elements (like mobile tabs) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* Line clamp utilities (safe fallback) */
+/* Text Clamping for product titles */
 .line-clamp-1 {
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -359,26 +308,14 @@ button, a {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.line-clamp-3 {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+
+/* Smooth expand effect for mobile filters */
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+  transform-origin: top;
 }
 
-/* Reduced motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* iOS safe area */
-@supports (padding: env(safe-area-inset-bottom)) {
-  body {
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+@keyframes slideDown {
+  0% { transform: scaleY(0); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 1; }
 }

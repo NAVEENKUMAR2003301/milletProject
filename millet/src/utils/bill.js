@@ -2,7 +2,7 @@ import { SHOP } from '../config/shop';
 import { formatDateTime } from './format';
 
 export function buildBillText(order) {
-  const { orderId, customer, items, subtotal, savings, total, createdAt } = order;
+  const { orderId, customer, items, subtotal, savings, shippingMethod, shippingCost, total, createdAt } = order;
   const lines = [];
 
   lines.push(`*${SHOP.brand}* — ${SHOP.name}`);
@@ -25,13 +25,14 @@ export function buildBillText(order) {
       `${idx + 1}. ${title} ${i.weight ? `(${i.weight})` : ''}`
     );
     lines.push(`   ${i.qty} × ₹${i.price} = ₹${i.qty * i.price}`);
-    if (i.discount > 0) {
-      lines.push(`   (${i.discount}% off applied)`);
-    }
   });
   lines.push('———————————————');
   lines.push(`Subtotal: ₹${subtotal}`);
   if (savings > 0) lines.push(`You Save: ₹${savings}`);
+  
+  // Shipping Logic
+  lines.push(`Shipping (${shippingMethod}): ${shippingCost === 0 ? 'FREE' : `₹${shippingCost}`}`);
+  
   lines.push(`*TOTAL: ₹${total}*`);
   lines.push('');
   lines.push('Please confirm this order. Thank you! 🙏');

@@ -7,6 +7,7 @@ import ProductForm from '../components/admin/ProductForm';
 import ProductList from '../components/admin/ProductList';
 import OrderList from '../components/admin/OrderList';
 import FeedbackList from '../components/admin/FeedbackList';
+import ShippingSettings from '../components/admin/ShippingSettings'; // <-- NEW
 
 function AdminInner() {
   const { products, loading, addProduct, updateProduct, removeProduct } = useProducts();
@@ -83,6 +84,7 @@ function AdminInner() {
 
       {tab === 'orders' && <OrderList />}
       {tab === 'feedback' && <FeedbackList />}
+      {tab === 'shipping' && <ShippingSettings />}
     </AdminLayout>
   );
 }

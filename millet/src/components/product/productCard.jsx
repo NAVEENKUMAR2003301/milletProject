@@ -3,11 +3,7 @@ import { useLang } from '../../contexts/LanguageContext';
 import { useCart } from '../../contexts/CartContext';
 import { useSound } from '../../hooks/useSound';
 import { formatPrice } from '../../utils/format';
-import {
-  getVariants,
-  getLowestPrice,
-  hasMultipleVariants,
-} from '../../utils/variants';
+import { getVariants, getLowestPrice, hasMultipleVariants } from '../../utils/variants';
 
 export default function ProductCard({ product, onOpen }) {
   const { lang, t } = useLang();
@@ -21,26 +17,13 @@ export default function ProductCard({ product, onOpen }) {
   const lowestPrice = getLowestPrice(product);
   const firstVariant = variants[0] || {};
   const mrp = firstVariant.mrp || lowestPrice;
-  const discount =
-    firstVariant.discount ||
-    (mrp > lowestPrice ? Math.round(((mrp - lowestPrice) / mrp) * 100) : 0);
-
-  const mainImage =
-    (Array.isArray(product.images) && product.images[0]) ||
-    product.imageUrl ||
-    '';
-  const imageCount = Array.isArray(product.images) ? product.images.length : 0;
+  const discount = firstVariant.discount || (mrp > lowestPrice ? Math.round(((mrp - lowestPrice) / mrp) * 100) : 0);
+  const mainImage = (Array.isArray(product.images) && product.images[0]) || product.imageUrl || '';
 
   const handleAdd = (e) => {
     e.stopPropagation();
-    if (!product.available) {
-      play('buzz');
-      return;
-    }
-    if (multi) {
-      onOpen?.(product);
-      return;
-    }
+    if (!product.available) { play('buzz'); return; }
+    if (multi) { onOpen?.(product); return; }
     const v = variants[0];
     if (!v) return;
     addItem(product, v, 1);
@@ -50,90 +33,54 @@ export default function ProductCard({ product, onOpen }) {
   };
 
   return (
-    <div
-      onClick={() => onOpen?.(product)}
-      className="card cursor-pointer group overflow-hidden relative h-full flex flex-col
-                 hover:-translate-y-1 hover:shadow-glass-lg transition-all duration-300
-                 p-3 sm:p-4"
-    >
-      <div className="relative aspect-square rounded-2xl overflow-hidden bg-trust-50 mb-2.5 sm:mb-3">
+    <div onClick={() => onOpen?.(product)} className="group cursor-pointer h-full flex flex-col bg-white/80 backdrop-blur-md rounded-2xl border border-white shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+      
+      {/* Image Container */}
+      <div className="relative aspect-square overflow-hidden bg-trust-50">
         {mainImage ? (
-          <img
-            src={mainImage}
-            alt={title}
-            loading="lazy"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          <img src={mainImage} alt={title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-4xl sm:text-5xl opacity-60">
-            🌾
-          </div>
+          <div className="w-full h-full flex items-center justify-center text-5xl opacity-40">🌾</div>
         )}
 
         {discount > 0 && (
-          <div className="absolute top-1.5 sm:top-2 left-1.5 sm:left-2 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-amber-500 text-white text-[9px] sm:text-[10px] font-extrabold shadow-md">
-            {discount}% {t('discount')}
+          <div className="absolute top-2 left-2 px-2 py-1 rounded-lg bg-amber-500 text-white text-[10px] font-extrabold shadow-sm">
+            {discount}% OFF
           </div>
         )}
-
-        {product.featured && (
-          <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-fresh-500 text-white text-[9px] sm:text-[10px] font-extrabold shadow-md">
-            ⭐
-          </div>
-        )}
-
-        {imageCount > 1 && (
-          <div className="absolute bottom-1.5 sm:bottom-2 right-1.5 sm:right-2 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg bg-ink/70 backdrop-blur-sm text-white text-[9px] sm:text-[10px] font-bold flex items-center gap-0.5">
-            📷 {imageCount}
-          </div>
-        )}
-
         {!product.available && (
-          <div className="absolute inset-0 bg-white/70 backdrop-blur-sm flex items-center justify-center">
-            <span className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl bg-ink/80 text-white text-[10px] sm:text-xs font-bold">
-              {t('outOfStock')}
-            </span>
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex items-center justify-center">
+            <span className="px-3 py-1.5 rounded-xl bg-ink/80 text-white text-xs font-bold">{t('outOfStock')}</span>
           </div>
         )}
       </div>
 
-      <div className="flex flex-col flex-1">
-        <h3 className="font-bold text-ink text-xs sm:text-sm leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-[2.5rem]">
+      {/* Content Container */}
+      <div className="p-3 sm:p-4 flex flex-col flex-1">
+        <h3 className="font-bold text-ink text-xs sm:text-sm leading-snug line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem] group-hover:text-trust-600 transition-colors">
           {title}
         </h3>
-
-        <p className="text-[10px] sm:text-[11px] text-ink/50 mt-0.5">
-          {multi
-            ? `${variants.length} ${t('variants')}`
-            : variants[0]?.weight || ''}
+        <p className="text-[10px] text-ink/50 mt-0.5 mb-2">
+          {multi ? `${variants.length} Weights` : variants[0]?.weight || ''}
         </p>
 
-        <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
-          {multi && (
-            <span className="text-[10px] sm:text-xs text-ink/50 font-semibold">
-              {t('from')}
-            </span>
-          )}
-          <span className="text-base sm:text-lg font-extrabold text-trust-700">
-            {formatPrice(lowestPrice)}
-          </span>
-        </div>
+        <div className="mt-auto">
+          <div className="flex items-baseline gap-1.5 flex-wrap mb-3">
+            {multi && <span className="text-[10px] text-ink/50 font-semibold">From</span>}
+            <span className="text-base sm:text-lg font-extrabold text-trust-700">{formatPrice(lowestPrice)}</span>
+            {discount > 0 && <span className="text-[10px] text-ink/40 line-through">{formatPrice(mrp)}</span>}
+          </div>
 
-        <button
-          onClick={handleAdd}
-          disabled={!product.available}
-          className={`mt-auto pt-2.5 sm:pt-3 w-full py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
-            added
-              ? 'bg-fresh-500 text-white scale-[1.02]'
-              : 'bg-gradient-to-br from-trust-500 to-fresh-500 text-white hover:shadow-lg active:scale-95'
-          } ${!product.available ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          {added
-            ? `✓ ${t('addedToCart')}`
-            : multi
-            ? `🛒 ${t('selectVariant')}`
-            : t('addToCart')}
-        </button>
+          <button
+            onClick={handleAdd}
+            disabled={!product.available}
+            className={`w-full py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-sm font-bold transition-all duration-200 ${
+              added ? 'bg-fresh-500 text-white scale-95' : 'bg-trust-50 text-trust-700 hover:bg-trust-500 hover:text-white active:scale-95'
+            } ${!product.available ? 'opacity-50' : ''}`}
+          >
+            {added ? `✓ ${t('addedToCart')}` : multi ? `+ ${t('selectVariant')}` : `+ ${t('addToCart')}`}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { useLang } from '../contexts/LanguageContext';
 import { useProducts } from '../contexts/ProductContext';
 import { useSound } from '../hooks/useSound';
-import ProductGrid from '../components/product/productGrid';
-import ProductModal from '../components/product/productModal';
+import ProductGrid from '../components/product/ProductGrid';
+import ProductModal from '../components/product/ProductModal';
 import EmptyState from '../components/ui/EmptyState';
 import { SHOP } from '../config/shop';
 
@@ -14,141 +14,63 @@ export default function Home() {
   const { play } = useSound();
   const [openProduct, setOpenProduct] = useState(null);
 
-  const featured = products.filter((p) => p.featured && p.available).slice(0, 4);
-  const recent = products.filter((p) => p.available).slice(0, 8);
-  const showcase = featured.length > 0 ? featured : recent;
+  // Fallbacks to ensure products show up even if featured isn't set
+  const availableProducts = products.filter((p) => p.available);
+  const featured = availableProducts.filter((p) => p.featured).slice(0, 4);
+  const showcase = featured.length > 0 ? featured : availableProducts.slice(0, 8);
 
   return (
-    <main className="px-3 sm:px-4 max-w-6xl mx-auto pt-4 sm:pt-6 pb-24 md:pb-6">
-      {/* HERO */}
-      <section className="relative glass-dark rounded-3xl p-5 sm:p-6 md:p-12 overflow-hidden animate-slide-up">
+    <main className="pt-4 sm:pt-8 animate-fade-in">
+      <section className="relative glass-dark rounded-3xl p-5 sm:p-10 md:p-14 overflow-hidden mb-10 sm:mb-16">
         <div className="relative z-10 max-w-2xl">
-          {/* Brand logo row */}
-          <div className="flex items-center gap-3 mb-5">
-            <img
-              src="/logo.jpeg"
-              alt={SHOP.brand}
-              className="w-11 h-11 md:w-14 md:h-14 rounded-2xl object-cover border-2 border-white shadow-md flex-shrink-0"
-            />
-            <div className="min-w-0">
-              <p className="font-display font-extrabold text-trust-700 text-base md:text-lg leading-none truncate">
-                {SHOP.brand}
-              </p>
-              <p className="text-[10px] md:text-[11px] text-ink/50 mt-1 truncate">
-                {SHOP.name}
-              </p>
+          <div className="inline-flex items-center gap-2 mb-4 sm:mb-6 animate-slide-up">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl overflow-hidden border border-white shadow-sm flex-shrink-0">
+              <img src="/logo.jpeg" alt={SHOP.brand} className="w-full h-full object-cover" />
             </div>
+            <span className="px-3 py-1 rounded-full bg-fresh-100 text-fresh-700 text-[10px] sm:text-xs font-bold tracking-wide uppercase">
+              {t('heroTagline')}
+            </span>
           </div>
 
-          <span className="inline-block px-3 py-1 rounded-full bg-fresh-100 text-fresh-700 text-xs font-bold mb-4">
-            {t('heroTagline')}
-          </span>
-          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-display font-extrabold leading-[1.1] text-ink tracking-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-display font-extrabold leading-[1.1] text-ink tracking-tight animate-slide-up" style={{ animationDelay: '100ms' }}>
             {t('heroTitle')}
           </h1>
-          <p className="text-sm md:text-base text-ink/70 mt-4 leading-relaxed">
+          <p className="text-sm sm:text-lg text-ink/70 mt-4 sm:mt-5 leading-relaxed animate-slide-up" style={{ animationDelay: '200ms' }}>
             {t('heroSubtitle')}
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/shop" onClick={() => play('click')} className="btn-primary">
+          <div className="mt-8 flex flex-col sm:flex-row gap-3 animate-slide-up" style={{ animationDelay: '300ms' }}>
+            <Link to="/shop" onClick={() => play('click')} className="btn-primary py-3 px-6 text-sm sm:text-base">
               🛒 {t('shopNow')}
             </Link>
-            <a href="#featured" onClick={() => play('click')} className="btn-secondary">
-              {t('learnMore')}
-            </a>
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-2 text-[11px]">
-            <span className="px-2.5 py-1 rounded-lg bg-white/70 border border-trust-100 text-trust-700 font-semibold">
-              🌱 100% Natural
-            </span>
-            <span className="px-2.5 py-1 rounded-lg bg-white/70 border border-trust-100 text-trust-700 font-semibold">
-              🚫 No Preservatives
-            </span>
-            <span className="px-2.5 py-1 rounded-lg bg-white/70 border border-trust-100 text-trust-700 font-semibold">
-              🇮🇳 Made in Tamil Nadu
-            </span>
           </div>
         </div>
-
-        {/* Faded logo watermark */}
-        <div className="hidden md:block absolute -right-8 -bottom-10 opacity-[0.06] animate-float-slow select-none pointer-events-none">
-          <img
-            src="/logo.jpeg"
-            alt=""
-            className="w-72 h-72 object-contain rounded-full"
-          />
+        <div className="hidden md:block absolute -right-10 -bottom-10 opacity-[0.04] animate-float-slow pointer-events-none">
+           <div className="text-[250px] leading-none select-none">🌾</div>
         </div>
       </section>
 
-      {/* FEATURED / RECENT */}
-      <section id="featured" className="mt-10 sm:mt-12">
-        <div className="flex items-end justify-between mb-4 sm:mb-5">
+      <section id="featured" className="animate-slide-up" style={{ animationDelay: '400ms' }}>
+        <div className="flex items-end justify-between mb-6">
           <div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-ink tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-display font-extrabold text-ink">
               {featured.length > 0 ? t('featured') : t('allProducts')}
             </h2>
-            <p className="text-xs text-ink/50 mt-1">{SHOP.name}</p>
+            <p className="text-xs text-ink/50 mt-1">Handpicked for you</p>
           </div>
-          <Link
-            to="/shop"
-            onClick={() => play('click')}
-            className="btn-ghost text-sm"
-          >
-            {t('shop')} →
+          <Link to="/shop" onClick={() => play('click')} className="text-sm font-bold text-trust-600 hover:text-trust-800 transition">
+            View All →
           </Link>
         </div>
 
         {!loading && showcase.length === 0 ? (
-          <EmptyState
-            emoji="🌾"
-            title={t('noProducts')}
-            subtitle="Products will appear here once the shop owner adds them via the admin panel."
-          />
+          <EmptyState emoji="🌾" title={t('noProducts')} subtitle="Products will appear here once added by admin." />
         ) : (
-          <ProductGrid
-            products={showcase}
-            loading={loading}
-            onOpen={setOpenProduct}
-          />
+          <ProductGrid products={showcase} loading={loading} onOpen={setOpenProduct} />
         )}
       </section>
 
-      {/* WHY US */}
-      <section className="mt-12 sm:mt-14 grid md:grid-cols-3 gap-3 sm:gap-4">
-        {[
-          {
-            icon: '🌿',
-            title: 'Naturally Sourced',
-            desc: 'Millets & grains handpicked from trusted farms.',
-          },
-          {
-            icon: '⚙️',
-            title: 'Stone-Ground',
-            desc: 'Traditional grinding preserves nutrients & taste.',
-          },
-          {
-            icon: '📦',
-            title: 'Fresh Packing',
-            desc: 'Sealed for freshness, no preservatives added.',
-          },
-        ].map((f, i) => (
-          <div
-            key={i}
-            className="card animate-slide-up"
-            style={{ animationDelay: `${i * 100}ms` }}
-          >
-            <div className="text-3xl mb-2">{f.icon}</div>
-            <h3 className="font-bold text-ink">{f.title}</h3>
-            <p className="text-sm text-ink/60 mt-1">{f.desc}</p>
-          </div>
-        ))}
-      </section>
-
-      {openProduct && (
-        <ProductModal product={openProduct} onClose={() => setOpenProduct(null)} />
-      )}
+      {openProduct && <ProductModal product={openProduct} onClose={() => setOpenProduct(null)} />}
     </main>
   );
 }
