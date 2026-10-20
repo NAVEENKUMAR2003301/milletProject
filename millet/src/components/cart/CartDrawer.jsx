@@ -5,7 +5,7 @@ import { useCart } from '../../contexts/CartContext';
 import { useShipping } from '../../contexts/ShippingContext';
 import { useSound } from '../../hooks/useSound';
 import { formatPrice } from '../../utils/format';
-import CartItem from './cartItem';
+import CartItem from './CartItem';
 import EmptyState from '../ui/EmptyState';
 
 export default function CartDrawer() {
