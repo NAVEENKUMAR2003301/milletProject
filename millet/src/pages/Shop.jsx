@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useLang } from '../contexts/LanguageContext';
 import { useProducts } from '../contexts/ProductContext';
-import SearchBar from '../components/product/searchBar'; // 🟢 CHANGED TO LOWERCASE
-import CategoryFilter from '../components/product/categoryFilter'; // 🟢 CHANGED TO LOWERCASE
+import SearchBar from '../components/product/SearchBar'; // 🟢 CHANGED TO LOWERCASE
+import CategoryFilter from '../components/product/CategoryFilter'; // 🟢 CHANGED TO LOWERCASE
 import ProductGrid from '../components/product/productGrid'; // 🟢 CHANGED TO LOWERCASE
 import ProductModal from '../components/product/productModal'; // 🟢 CHANGED TO LOWERCASE
 import TopReviews from '../components/feedback/TopReviews';
