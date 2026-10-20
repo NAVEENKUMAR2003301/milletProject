@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useLang } from '../contexts/LanguageContext';
 import { useProducts } from '../contexts/ProductContext';
-import SearchBar from '../components/product/searchBar';
-import CategoryFilter from '../components/product/categoryFilter';
+import SearchBar from '../components/product/SearchBar';
+import CategoryFilter from '../components/product/CategoryFilter';
 import ProductGrid from '../components/product/productGrid';
 import ProductModal from '../components/product/productModal';
 import TopReviews from '../components/feedback/TopReviews';
