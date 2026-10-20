@@ -29,11 +29,10 @@ export default function App() {
                   <ScrollToTop />
                   <Background />
                   
-                  {/* Main flex container respects mobile viewport height */}
                   <div className="min-h-[100dvh] flex flex-col relative z-10">
                     <Navbar />
                     
-                    {/* Add padding bottom so mobile bottom bar doesn't overlap content */}
+                    {/* Main Content: Added pb-28 for mobile bottom bar clearance */}
                     <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 pb-28 md:pb-10">
                       <Routes>
                         <Route path="/" element={<Home />} />

@@ -5,7 +5,7 @@ import { useCart } from '../../contexts/CartContext';
 import { useShipping } from '../../contexts/ShippingContext';
 import { useSound } from '../../hooks/useSound';
 import { formatPrice } from '../../utils/format';
-import CartItem from './CartItem';
+import CartItem from './cartItem';
 import EmptyState from '../ui/EmptyState';
 
 export default function CartDrawer() {
@@ -28,8 +28,8 @@ export default function CartDrawer() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" onClick={closeCart}>
-      <div className="absolute inset-0 bg-ink/30 backdrop-blur-sm animate-fade-in" />
+    <div className="fixed inset-0 z-[60] flex justify-end" onClick={closeCart}>
+      <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm animate-fade-in" />
       
       <aside
         onClick={(e) => e.stopPropagation()}
