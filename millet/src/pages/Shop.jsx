@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useLang } from '../contexts/LanguageContext';
 import { useProducts } from '../contexts/ProductContext';
-import SearchBar from '../components/product/SearchBar';
-import CategoryFilter from '../components/product/CategoryFilter';
-import ProductGrid from '../components/product/ProductGrid';
-import ProductModal from '../components/product/ProductModal';
+import SearchBar from '../components/product/searchBar'; // 🟢 CHANGED TO LOWERCASE
+import CategoryFilter from '../components/product/categoryFilter'; // 🟢 CHANGED TO LOWERCASE
+import ProductGrid from '../components/product/productGrid'; // 🟢 CHANGED TO LOWERCASE
+import ProductModal from '../components/product/productModal'; // 🟢 CHANGED TO LOWERCASE
 import TopReviews from '../components/feedback/TopReviews';
 import EmptyState from '../components/ui/EmptyState';
 import ShippingWidget from '../components/shop/ShippingWidget';
@@ -17,7 +17,6 @@ export default function Shop() {
   const [sort, setSort] = useState('new');
   const [openProduct, setOpenProduct] = useState(null);
   
-  // 🟢 State to toggle filters on mobile
   const [showFilters, setShowFilters] = useState(false);
 
   const filtered = useMemo(() => {
@@ -51,7 +50,7 @@ export default function Shop() {
 
       <ShippingWidget />
 
-      {/* 🟢 MOBILE TOGGLE BUTTON (Only visible on mobile) */}
+      {/* MOBILE TOGGLE BUTTON */}
       <div className="md:hidden mb-4 sticky top-[76px] z-30">
         <button
           onClick={() => setShowFilters(!showFilters)}
@@ -69,7 +68,7 @@ export default function Shop() {
         </button>
       </div>
 
-      {/* 🟢 FILTER BOX (Hidden by default on mobile, always visible on desktop) */}
+      {/* FILTER BOX */}
       <div 
         className={`glass rounded-2xl p-3 sm:p-4 mb-6 flex-col gap-3 sticky top-[80px] z-20 shadow-sm transition-all duration-300 overflow-hidden
           ${showFilters ? 'flex opacity-100 max-h-[500px]' : 'hidden md:flex md:opacity-100 md:max-h-[500px]'}

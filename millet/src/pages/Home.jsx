@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { useLang } from '../contexts/LanguageContext';
 import { useProducts } from '../contexts/ProductContext';
 import { useSound } from '../hooks/useSound';
-import ProductGrid from '../components/product/ProductGrid';
-import ProductModal from '../components/product/ProductModal';
+import ProductGrid from '../components/product/productGrid'; // 🟢 CHANGED TO LOWERCASE
+import ProductModal from '../components/product/productModal'; // 🟢 CHANGED TO LOWERCASE
 import EmptyState from '../components/ui/EmptyState';
 import { SHOP } from '../config/shop';
 
@@ -14,13 +14,14 @@ export default function Home() {
   const { play } = useSound();
   const [openProduct, setOpenProduct] = useState(null);
 
-  // Fallbacks to ensure products show up even if featured isn't set
   const availableProducts = products.filter((p) => p.available);
   const featured = availableProducts.filter((p) => p.featured).slice(0, 4);
   const showcase = featured.length > 0 ? featured : availableProducts.slice(0, 8);
 
   return (
     <main className="pt-4 sm:pt-8 animate-fade-in">
+      
+      {/* Hero Section */}
       <section className="relative glass-dark rounded-3xl p-5 sm:p-10 md:p-14 overflow-hidden mb-10 sm:mb-16">
         <div className="relative z-10 max-w-2xl">
           <div className="inline-flex items-center gap-2 mb-4 sm:mb-6 animate-slide-up">
@@ -43,13 +44,18 @@ export default function Home() {
             <Link to="/shop" onClick={() => play('click')} className="btn-primary py-3 px-6 text-sm sm:text-base">
               🛒 {t('shopNow')}
             </Link>
+            <a href="#featured" onClick={() => play('click')} className="btn-secondary py-3 px-6 text-sm sm:text-base">
+              {t('learnMore')}
+            </a>
           </div>
         </div>
+
         <div className="hidden md:block absolute -right-10 -bottom-10 opacity-[0.04] animate-float-slow pointer-events-none">
            <div className="text-[250px] leading-none select-none">🌾</div>
         </div>
       </section>
 
+      {/* Featured Products */}
       <section id="featured" className="animate-slide-up" style={{ animationDelay: '400ms' }}>
         <div className="flex items-end justify-between mb-6">
           <div>
