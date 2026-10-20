@@ -53,7 +53,6 @@ export default function ProductModal({ product, onClose }) {
   };
 
   return (
-    // 🟢 Increased z-index to z-[100] to cover the bottom navbar completely
     <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-6" onClick={onClose}>
       <div className="absolute inset-0 bg-ink/50 backdrop-blur-sm animate-fade-in" />
 
@@ -61,14 +60,17 @@ export default function ProductModal({ product, onClose }) {
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-4xl bg-white md:glass-dark rounded-t-3xl md:rounded-3xl shadow-2xl flex flex-col max-h-[92dvh] md:max-h-[85vh] animate-slide-up overflow-hidden"
       >
+        {/* Mobile Drag Handle */}
         <div className="md:hidden w-12 h-1.5 bg-ink/20 rounded-full mx-auto mt-3 flex-shrink-0" />
 
+        {/* Close Button */}
         <button onClick={onClose} className="absolute top-4 right-4 z-20 p-2.5 rounded-full bg-white/90 text-ink/60 hover:text-ink shadow-sm backdrop-blur-md transition active:scale-95">✕</button>
 
+        {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 pb-4 md:pb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             
-            {/* Images */}
+            {/* Left: Images */}
             <div className="flex flex-col gap-3">
               <div className="relative aspect-square rounded-2xl overflow-hidden bg-trust-50 border border-trust-100/50 shadow-sm">
                 {images[imgIndex] ? (
@@ -99,8 +101,14 @@ export default function ProductModal({ product, onClose }) {
               )}
             </div>
 
-            {/* Info */}
+            {/* Right: Details */}
             <div className="flex flex-col">
+              {/* Badges */}
+              <div className="flex flex-wrap gap-2 mb-2">
+                <span className="px-2.5 py-1 rounded-lg bg-fresh-50 text-fresh-700 text-[10px] font-bold border border-fresh-100">🌱 100% Natural</span>
+                <span className="px-2.5 py-1 rounded-lg bg-trust-50 text-trust-700 text-[10px] font-bold border border-trust-100">{t('inStock') || 'In Stock'}</span>
+              </div>
+
               <h2 className="text-2xl md:text-3xl font-display font-extrabold text-ink leading-tight mb-2">{title}</h2>
 
               <div className="flex items-baseline gap-2.5 mb-5">
@@ -108,9 +116,10 @@ export default function ProductModal({ product, onClose }) {
                 {discount > 0 && <span className="text-sm md:text-base text-ink/40 line-through font-semibold">{formatPrice(mrp)}</span>}
               </div>
 
+              {/* Variants */}
               {variants.length > 0 && (
                 <div className="mb-6">
-                  <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2.5">Select Weight</p>
+                  <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2.5">{t('selectVariant') || 'Select Weight'}</p>
                   <div className="flex flex-wrap gap-2">
                     {variants.map((v) => (
                       <button key={v.id} onClick={() => { play('tick'); setVariantId(v.id); }} className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all border-2 flex items-center gap-2 ${v.id === selectedVariant?.id ? 'bg-trust-500 text-white border-trust-500 shadow-md' : 'bg-white text-trust-700 border-trust-100 hover:border-trust-300'}`}>
@@ -122,17 +131,42 @@ export default function ProductModal({ product, onClose }) {
                 </div>
               )}
 
+              {/* Description */}
               {description && (
                 <div className="mb-5">
                   <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2">Description</p>
                   <p className="text-sm text-ink/70 leading-relaxed">{description}</p>
                 </div>
               )}
+
+              {/* Ingredients */}
+              {Array.isArray(product.ingredients) && product.ingredients.length > 0 && (
+                <div className="mb-5">
+                  <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2">{t('ingredients') || 'Ingredients'}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {product.ingredients.map((ing, i) => (
+                      <span key={i} className="px-2.5 py-1 rounded-lg bg-trust-50 text-trust-700 text-[11px] font-medium border border-trust-100">
+                        {ing}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Preparation */}
+              {product.preparation && (
+                <div className="mb-5">
+                  <p className="text-xs font-bold text-trust-700 uppercase tracking-wide mb-2">{t('preparation') || 'Preparation'}</p>
+                  <p className="text-sm text-ink/70 leading-relaxed whitespace-pre-line bg-trust-50/50 p-3 rounded-xl border border-trust-100/50">
+                    {product.preparation}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* 🟢 Sticky Bottom Actions (Added pb-24 to prevent navbar overlap) */}
+        {/* Sticky Bottom Actions (pb-24 ensures it doesn't hide behind mobile navbar) */}
         <div className="flex-shrink-0 bg-white/95 backdrop-blur-md border-t border-trust-100 p-4 pb-24 md:pb-6 md:p-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
           <div className="flex items-center gap-3 max-w-4xl mx-auto">
             <div className="flex items-center rounded-xl bg-white border-2 border-trust-100 h-12">
@@ -142,7 +176,7 @@ export default function ProductModal({ product, onClose }) {
             </div>
 
             <button onClick={handleAdd} disabled={!product.available} className="btn-primary flex-1 h-12 text-base md:text-lg font-bold shadow-lg">
-              {product.available ? `Add to Cart — ${formatPrice(price * qty)}` : t('outOfStock')}
+              {product.available ? `${t('addToCart')} — ${formatPrice(price * qty)}` : t('outOfStock')}
             </button>
           </div>
         </div>
