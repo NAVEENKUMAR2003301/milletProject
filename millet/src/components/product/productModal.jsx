@@ -53,7 +53,8 @@ export default function ProductModal({ product, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end md:items-center justify-center p-0 md:p-6" onClick={onClose}>
+    // 🟢 Increased z-index to z-[100] to cover the bottom navbar completely
+    <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-0 md:p-6" onClick={onClose}>
       <div className="absolute inset-0 bg-ink/50 backdrop-blur-sm animate-fade-in" />
 
       <div
@@ -131,8 +132,8 @@ export default function ProductModal({ product, onClose }) {
           </div>
         </div>
 
-        {/* Sticky Bottom Actions */}
-        <div className="flex-shrink-0 bg-white/95 backdrop-blur-md border-t border-trust-100 p-4 md:p-6 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        {/* 🟢 Sticky Bottom Actions (Added pb-24 to prevent navbar overlap) */}
+        <div className="flex-shrink-0 bg-white/95 backdrop-blur-md border-t border-trust-100 p-4 pb-24 md:pb-6 md:p-6 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
           <div className="flex items-center gap-3 max-w-4xl mx-auto">
             <div className="flex items-center rounded-xl bg-white border-2 border-trust-100 h-12">
               <button onClick={() => { play('tick'); setQty((q) => Math.max(1, q - 1)); }} className="w-10 h-full text-trust-700 font-bold text-xl hover:bg-trust-50 rounded-l-xl transition">−</button>

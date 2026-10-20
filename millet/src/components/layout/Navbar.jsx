@@ -56,7 +56,7 @@ export default function Navbar() {
         </nav>
       </div>
 
-      {/* Mobile Bottom Tab Bar (Fixed at bottom with safe area padding) */}
+      {/* Mobile Bottom Tab Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
         <div className="glass-dark border-t border-white/50 px-2 pt-1.5 pb-1.5 grid grid-cols-4 gap-1 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] rounded-t-2xl mx-2 mb-2">
           <NavLink to="/" end className={mobileTab} onClick={() => play('click')}>
